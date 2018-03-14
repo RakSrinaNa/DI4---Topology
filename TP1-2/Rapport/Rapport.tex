@@ -1,0 +1,86 @@
+\documentclass{report}
+\usepackage{MCC}
+
+\def\footauthor{Thomas COUCHOUD \& Victor COLEAU}
+\title{Rapport TP1}
+\author{Thomas COUCHOUD\\\texttt{thomas.couchoud@etu.univ-tours.fr}\\Victor COLEAU\\\texttt{victor.coleau@etu.univ-tours.fr}}
+
+\begin{document}
+	\mccTitle[no]
+	\tableofcontents
+
+	\chapter{Ibsim}
+		Après avoir recopié le fichier de configuration topologique et lancé le programme avec ce dernier, on peut observer que la sortie dans la console correspond exactement avec la figure 2 du sujet.
+		
+		\img[fig:dump]{dump.png}{Sortie du programme avec dump}{0.7}
+		
+		On peut par la suite rentrer de nouvelles commandes. La liste de ces dernières est disponible en tapant \cbo{help}.
+		
+		\begin{easylist}[itemize]
+			& !: Lance des commandes depuis un fichier
+			& dump: Affiche les informations du réseau
+			& Route: Affiche la route entre deux noeuds
+			& Link: permet de faire une connexion réseau.	
+			& Relink: Réétabli une connexion réseau.
+			& Unlink: Supprime un lien réseau.
+			& Clear: Supprime les liens réseau \& réinitialise les ports.
+			& Guid: Définit le GUID d'un noeud.
+			& Error: Définit le statut d'erreur d'un port/noeud.
+			& PerformanceSet: Définit les conteurs de performance.
+			& Baselid: Change le lid d'un port.
+			& Verbose: Définit le niveau de sortie dans la console.
+			& Wait: Suspend la simulation.
+			& Attached: Liste tous les clients attachés.
+			& X: Déconnecte un client.
+			& Quit: Ferme le programme.
+		\end{easylist}
+		
+		Nous avons tenté route mais on nous dit que les lid ne sont pas définis alors que nous les avons définis pour chaque n\oe ud.
+	
+	\chapter{Générateur de topologie}
+		Tout d'abord le dossier de sources contient un Makefile. Il est donc possible de compiler facilement le programme grâce à la commande \cbo{make}.
+		
+		Plusieurs classes sont présentes:
+		\begin{easylist}[itemize]
+			& Node: représente un n\oe ud du réseau. Ce dernier est composé d'un nom, type, ID, et d'une liste de ports avec leurs connections.
+			& Machine: représente une machine du réseau. Cette classe étend Node avec comme type "Hca" et 1 port.
+			& Commutator: représente un switch du réseau. Cette classe étend Node avec comme type "Switch".
+		\end{easylist}
+	
+		Le fichier main réalise la création des éléments ainsi que les liens entre ces derniers:
+		\begin{easylist}[itemize]
+			& Création de toutes les machines
+			& Création de tout les switchs
+			&& Aggregation
+			&&& Création de tout les switch dans la zone d'aggregation
+			&&& Création des liens entre le switch et les machines qui le concernent
+			&& Edge
+			&&& Création de tout les switch dans la zone edge
+			&&& Création des liens entre le switch et les switchs de la zone d'aggregation
+			&& Core
+			&&& Création de tout les switch dans la zone core
+			&&& Création des liens entre le switch et les switchs de la zone edge
+			& Ajustements des ports pour suivre la norme imposée par le PDF
+		\end{easylist}
+	
+		Voici un exemple de fichier de sortie pour $k=4$:
+		\lstinputlisting[caption=topo.topo]{../Generator/topo.topo}
+
+	\appendix
+	\chapter{Sources du générateur}
+		\section{Node}
+			\lstinputlisting[caption=Node.h]{../Generator/Node.h}
+			\lstinputlisting[caption=Node.cpp]{../Generator/Node.cpp}
+			
+		\section{Machine}
+			\lstinputlisting[caption=Machine.h]{../Generator/Machine.h}
+			\lstinputlisting[caption=Machine.cpp]{../Generator/Machine.cpp}
+			
+		\section{Commutator}
+			\lstinputlisting[caption=Commutator.h]{../Generator/Commutator.h}
+			\lstinputlisting[caption=Commutator.cpp]{../Generator/Commutator.cpp}
+			
+		\section{Main}
+			\lstinputlisting[caption=main.cpp]{../Generator/main.cpp}
+		
+\end{document}

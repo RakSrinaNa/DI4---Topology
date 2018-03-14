@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+topo.topo
+TP1-2/Generator/.idea
+TP1-2/Generator/cmake-build-debug
+*.dvi
+*.ps
+TP1-2/Rapport/.texpadtmp
+TP1-2/Rapport/build
+TP3-4-5/Rapport/.texpadtmp
+

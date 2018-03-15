@@ -39,14 +39,14 @@ class Topology
 	public:
 		Topology();
 		~Topology();
-		Topology(char *path){ loadData(path); };
+        Topology(char *path){ loadData(path); }
 
 		int loadData(char *path);
 		void printData();
-		int getHostCount() { return hostCount; };
-		int getSwitchCount() { return switchCount; };
-		struct hostNode * getHostById(int hid) { return hostList[hid]; };
-		struct switchNode * getSwitchById(int sid) { return switchList[sid]; };
+        int getHostCount() { return hostCount; }
+        int getSwitchCount() { return switchCount; }
+        struct hostNode * getHostById(int hid) { return hostList[hid]; }
+        struct switchNode * getSwitchById(int sid) { return switchList[sid]; }
 		struct switchNode * getSwitchByName(string name);
 
 	private:

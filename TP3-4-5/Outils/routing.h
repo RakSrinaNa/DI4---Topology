@@ -31,12 +31,12 @@ class Routing
 	public:
 		Routing();
 		~Routing();
-		Routing(char * path) { itemCount = loadData(path); };
+        Routing(char * path) { itemCount = loadData(path); }
 
 		int loadData(char * path);	
 		void printData();  
-		int getTotalCount() { return routeTable.size(); };
-		struct routeItem *getTable(int id) {return routeTable[id];};
+        int getTotalCount() { return routeTable.size(); }
+        struct routeItem *getTable(int id) {return routeTable[id];}
 		struct routeItem *getTableByName(string name);
 		
 	private:

@@ -44,6 +44,28 @@ int Calculation::getHopCount(int fromId, int toId)
 	//Aide : Regarder la struture routeItem et switchNode elles pourront vous aider.
 	//Aide : struct routeItem * item = routingTable.getTableByName(switchName); permet de charger la table de routage
 	//Retourner le nombre de sauts du noeud fromId vers le toId	
+
+    bool found = true;
+    routeItem * route = routingTable.getTableByName(switchName);
+
+    while(found){
+
+        for(int i = 0; i < route->dstInfo.size(); i++)
+            if(route->dstInfo[i] == topologyTable.getHostById(toId))
+                if(route->lid[i])
+                {
+                    found = false;
+                    break;
+                }
+                else
+                {
+                    route = routingTable.getTable(route->lid[i]);
+                }
+
+        count++;
+    }
+
+
 	cout << "From " << fromNode << " to " << toNode << ": Hop Count = " << count << endl;
 	return count;
 }

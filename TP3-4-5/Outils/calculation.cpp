@@ -1,25 +1,23 @@
 #include <iostream>
-#include <fstream>
 #include <vector>
-#include <cstring>
-#include <sstream>
-#include <cstdlib>
 
 #include "calculation.h"
-#include "topology.h"
-#include "routing.h"
 
 using namespace std;
 
-Calculation::Calculation() {}
+Calculation::Calculation()
+{
+}
 
-Calculation::~Calculation() {}
+Calculation::~Calculation()
+{
+}
 
 /**
  * Constructeur qui charge les informations 
  * de la topologie et table de routage en mémoire.
  */
-Calculation::Calculation(char* topoFile, char* routeFile) 
+Calculation::Calculation(char * topoFile, char * routeFile)
 {
 	topologyTable.loadData(topoFile);
 	routingTable.loadData(routeFile);
@@ -31,41 +29,56 @@ Calculation::Calculation(char* topoFile, char* routeFile)
  */
 int Calculation::getHopCount(int fromId, int toId)
 {
-	int count = 0;
+  	if(fromId == toId)
+		return 0;
+	int count = 1;
 	
 	struct hostNode * fromHost = topologyTable.getHostById(fromId);
-
+	
 	string fromNode = fromHost->name;
 	string toNode = topologyTable.getHostById(toId)->name;
-
+	
 	string switchName = fromHost->dstName;
 	//TODO
 	//Parcourer la table de routage du noeud fromId vers le toId
 	//Aide : Regarder la struture routeItem et switchNode elles pourront vous aider.
 	//Aide : struct routeItem * item = routingTable.getTableByName(switchName); permet de charger la table de routage
 	//Retourner le nombre de sauts du noeud fromId vers le toId	
-
-    bool found = true;
-    routeItem * route = routingTable.getTableByName(switchName);
-
-    while(found){
-
-        for(int i = 0; i < route->dstInfo.size(); i++)
-            if(route->dstInfo[i] == topologyTable.getHostById(toId))
-                if(route->lid[i])
-                {
-                    found = false;
-                    break;
-                }
-                else
-                {
-                    route = routingTable.getTable(route->lid[i]);
-                }
-
-        count++;
-    }
-
-
+	
+	bool shouldSearch = true;
+	
+	while(shouldSearch)
+	{
+		bool changed = false;
+		routeItem * route = routingTable.getTableByName(switchName);
+		
+		for(int i = 0; i < route->subitems; i++)
+		{
+			if(route->dstInfo.at(static_cast<unsigned long>(i)) == topologyTable.getHostById(toId)->name)
+			{
+				string name = topologyTable.getSwitchByName(switchName)->dstName.at(static_cast<unsigned long>(route->outport.at(i)));
+				if(name == topologyTable.getHostById(toId)->name)
+				{
+					shouldSearch = false;
+					break;
+				}
+				else
+				{
+					changed = true;
+					switchName = name;
+				}
+			}
+		}
+		
+		if(shouldSearch && !changed)
+		{
+			std::cout << "ERRROR MAMAMIA" << std::endl;
+			break;
+		}
+		
+		count++;
+	}
+	
 	cout << "From " << fromNode << " to " << toNode << ": Hop Count = " << count << endl;
 	return count;
 }
@@ -73,30 +86,31 @@ int Calculation::getHopCount(int fromId, int toId)
 /**
  * Méthode qui implémente la métrique Minhop.
  */
-int Calculation::calculate() 
+int Calculation::calculate()
 {
 	int minHop = 0xffff; //Max value
-
+	
 	//TODO 
 	//Implémenter l'algo du calcul du nombre de sauts
 	//Aide : Pour recueperer le nombre de saut de source vers destination -> getHopCount(source, destination);
 	//Aide : Pour recuperer le nombre de HCA -> topologyTable.getHostCount();
 	//Aide  utiliser les fonctions min(i,j) et max(i,j) pour recuperer le min et le max entre deux valeurs
 	//retourner le minimum trouver.
-
-
-
-    for(int i = 0; i < topologyTable.getHostCount(); i++){
-        int cpt = 0;
-        for(int j = 0; j < topologyTable.getHostCount(); j++){
-            if(i == j)
-                continue;
-            cpt = max(cpt, getHopCount(i, j));
-        }
-        minHop = min(minHop, cpt);
-    }
-
-
+	
+	
+	
+	for(int i = 0; i < topologyTable.getHostCount(); i++)
+	{
+		int cpt = 0;
+		for(int j = 0; j < topologyTable.getHostCount(); j++)
+		{
+			if(i == j)
+				continue;
+			cpt = max(cpt, getHopCount(i, j));
+		}
+		minHop = min(minHop, cpt);
+	}
+	
 	return minHop;
 }
 
@@ -107,16 +121,16 @@ int Calculation::calculate()
 int Calculation::getRoute(int fromId, int toId)
 {
 	struct hostNode * fromHost = topologyTable.getHostById(fromId);
-
+	
 	string fromNode = fromHost->name;
-
+	
 	string toNode = topologyTable.getSwitchById(toId)->name;
 	
 	cout << "From " << fromNode << " to " << toNode;
-
+	
 	string switchName = fromHost->dstName;
-
-
+	
+	
 	//TODO
 	//Parcourir la table de routage du noeud fromId vers le toId
 	//Aide : Regarder la structure routeItem et switchNode elles pourront vous aider.
@@ -128,9 +142,9 @@ int Calculation::getRoute(int fromId, int toId)
 /**
  * Méthode qui implémente la métrique nombre de chemins disjoints.
  */
-int Calculation::balance() 
+int Calculation::balance()
 {
-	int balance = 0xffff; ; //Max value
+	int balance = 0xffff;; //Max value
 	
 	//TODO 
 	//Implémenter l'algo du calcul de chemins disjoints 
@@ -138,7 +152,7 @@ int Calculation::balance()
 	//Aide : Pour recuperer le nombre de HCA -> topologyTable.getHostCount();
 	//Aide  utiliser les fonctions min(i,j) et max(i,j) pour recuperer le min et le max entre deux valeurs
 	//retourner le minimum trouver.
-
-	return balance+1;
+	
+	return balance + 1;
 }
 

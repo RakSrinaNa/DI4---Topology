@@ -10,6 +10,29 @@
 	\tableofcontents
 
 	\chapter{OpenSM}
+		Lors du premier lancement d'opensm, on nous indique que le module ib\_umad n'est chargé.
 		
+		Nous avons donc edité le fichier \cbo{/etc/modules} en y ajoutant la ligne "ib\_umad" puis redémarrant.
+		
+		Lors du second essaie, le message \cbo{No local ports detected}.
+	
+	\chapter{Tables de routage}
+	
+	\chapter{Etudes de routages}
+		\section{Etudes de topologies avancés}
+			Le fichier \cbo{topo1.topo} contient une topologie $PGFT\left( 2,\left[ 3,3\right], \left[ 1,2\right], \left[ 1,2\right]\right)$.
+			
+			Le fichier \cbo{topo2.topo} contient une topologie $XGFT\left( 3, \left[ 1,2,2\right], \left[ 4,2,2\right]\right)$.
+			
+			\begin{table}[H]%TODO
+				\begin{tabularx}{0.99\textwidth}{|c|X|X|}
+					\hline
+					& XGFT & PGFT\\\hline\endhead
+					Avantages & On peut multiplier les liens entre des n\oe ux du niveau $L$ et $L-1$. Non bloquant. Premier "petaflopique".& \\\hline
+					Inconvénients & On ne peut pas doubler les liens entre deux n\oe ux & \\\hline	
+				\end{tabularx}
+				\caption{Avantages et inconvénients des topologies précédentes}
+			\end{table}
+			
 		
 \end{document}

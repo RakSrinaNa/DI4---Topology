@@ -8,3 +8,5 @@ sudo apt-get install git
 git clone https://github.com/jgunthorpe/ibsim.git
 cd ibsim
 make
+cd ..
+sudo echo "ib_sim" >> /etc/modules

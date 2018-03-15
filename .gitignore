@@ -48,3 +48,7 @@ TP1-2/Generator/generator
 TP3-4-5/Outils/main
 
 osm\.log
+
+sys-4157/sys/class/infiniband/ibsim0/
+
+sys-4157/sys/class/infiniband_mad/

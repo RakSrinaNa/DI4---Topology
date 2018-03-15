@@ -10,4 +10,3 @@ cd ibsim
 make
 cd ..
 sudo echo "ib_sim" >> /etc/modules
-chmod +x opensm.sh

@@ -23,7 +23,29 @@ sudo apt-get install bison
 sudo apt-get install tcpdump
 sudo apt-get install sqlite
 sudo apt-get install sqlite3
-sudo apt-get install libsqlite3-dev libxml2 libxml2-dev libgtk2.0-0 libgtk2.0-dev uncrustify doxygen graphviz imagemagick texlive texlive-latex-extra texlive-generic-extra texlive-generic-recommended texinfo dia texlive texlive-latex-extra texlive-extra-utils texlive-generic-recommended texi2html python-pygraphviz python-kiwi python-pygoocanvas libgoocanvas-dev python-pygccxml
+sudo apt-get install libsqlite3-dev
+sudo apt-get install libxml2
+sudo apt-get install libxml2-dev
+sudo apt-get install libgtk2.0-0
+sudo apt-get install libgtk2.0-dev
+sudo apt-get install uncrustify
+sudo apt-get install doxygen
+sudo apt-get install graphviz
+sudo apt-get install imagemagick
+sudo apt-get install texlive
+sudo apt-get install texlive-latex-extra
+sudo apt-get install texlive-generic-extra
+sudo apt-get install texlive-generic-recommended
+sudo apt-get install texinfo
+sudo apt-get install dia
+sudo apt-get install texlive-extra-utils
+sudo apt-get install texlive-generic-recommended
+sudo apt-get install texi2html
+sudo apt-get install python-pygraphviz
+sudo apt-get install python-kiwi
+sudo apt-get install python-pygoocanvas
+sudo apt-get install libgoocanvas-dev
+sudo apt-get install python-pygccxml
 git clone https://github.com/jgunthorpe/ibsim.git
 cd ibsim
 make

@@ -97,8 +97,6 @@ int Calculation::calculate()
 	//Aide  utiliser les fonctions min(i,j) et max(i,j) pour recuperer le min et le max entre deux valeurs
 	//retourner le minimum trouver.
 	
-	
-	
 	for(int i = 0; i < topologyTable.getHostCount(); i++)
 	{
 		int cpt = 0;

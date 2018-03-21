@@ -56,7 +56,7 @@ int Calculation::getHopCount(int fromId, int toId)
 		{
 			if(route->dstInfo.at(static_cast<unsigned long>(i)) == topologyTable.getHostById(toId)->name)
 			{
-				string name = topologyTable.getSwitchByName(switchName)->dstName.at(static_cast<unsigned long>(route->outport.at(i)));
+				string name = topologyTable.getSwitchByName(switchName)->dstName.at(static_cast<unsigned long>(route->outport.at(i)) - 1);
 				if(name == topologyTable.getHostById(toId)->name)
 				{
 					shouldSearch = false;

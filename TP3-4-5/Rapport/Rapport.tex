@@ -14,15 +14,30 @@
 		
 		Nous avons donc edité le fichier \cbo{/etc/modules} en y ajoutant la ligne "ib\_umad" puis redémarrant.
 		
-		Lors du second essaie, le message \cbo{No local ports detected}.
+		Le \textbf{LID} correspond à Local Identifier et permet d'identifier chaque périphérique du réseau et l'utiliser comme adresse.
+		
+		Lors du lancement d'OpenSM, on remarque que les LIDs sont attribués.
 	
 	\chapter{Tables de routage}
+		Un fichier route se décompose en les différentes tables de routages pour chaque commutateur.
+		
+		Chaque table contient des lignes similaires qui indique une route. Voici un exemple:
+		
+		0x0001 004 : (Channel Adapter portguid 0x0000000000100001: 'HCA(000)')
+		
+		Les champs sont les suivants:
+		\begin{easylist}
+			& Le LID de la destination
+			& Le port de sortie sur le switch
+			& Des informations sur la destination, notamment son nom
+		\end{easylist}
+
 	
 	\chapter{Etudes de routages}
 		\section{Etudes de topologies avancés}
-			Le fichier \cbo{topo1.topo} contient une topologie $PGFT\left( 2,\left[ 3,3\right], \left[ 1,2\right], \left[ 1,2\right]\right)$.
+			Le fichier \cbo{Topo1.topo} contient une topologie $PGFT\left( 2,\left[ 3,3\right], \left[ 1,2\right], \left[ 1,2\right]\right)$.
 			
-			Le fichier \cbo{topo2.topo} contient une topologie $XGFT\left( 3, \left[ 1,2,2\right], \left[ 4,2,2\right]\right)$.
+			Le fichier \cbo{Topo2.topo} contient une topologie $XGFT\left( 3, \left[ 1,2,2\right], \left[ 4,2,2\right]\right)$.
 			
 			\begin{table}[H]%TODO
 				\begin{tabularx}{0.99\textwidth}{|c|X|X|}
@@ -34,5 +49,27 @@
 				\caption{Avantages et inconvénients des topologies précédentes}
 			\end{table}
 			
+			Les tables de routage générées sont disponibles dans \autoref{sec:routes}.
+						
+		\section{Quelques algorithmes de routage}
 		
+		\section{Quelques métriques pour l’étude des performances des algorithmes de routage}
+			\section{MinHop}
+				Le code du calculateur est disponible dans \autoref{sec:code}
+				
+			\section{Route balancing}
+				
+			
+		
+	\appendix
+	\chapter{Calculateur\label{sec:code}}
+		\lstinputlisting[caption="Calculation.cpp"]{../Outils/calculation.cpp}
+	
+	\chapter{Tables de routage\label{sec:routes}}
+		\section{Topologie 1}
+			\lstinputlisting[caption="Route 1"]{../route1.route}
+			
+		\section{Topologie 2}
+			\lstinputlisting[caption="Route 2"]{../route2.route}
+	
 \end{document}

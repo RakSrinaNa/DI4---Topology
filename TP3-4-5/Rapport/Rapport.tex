@@ -10,18 +10,18 @@
 	\tableofcontents
 
 	\chapter{OpenSM}
-		Lors du premier lancement d'opensm, on nous indique que le module ib\_umad n'est chargé.
+		Lors du premier lancement d'opensm, on nous indique que le module ib\_umad n'est pas chargé.
 		
-		Nous avons donc edité le fichier \cbo{/etc/modules} en y ajoutant la ligne "ib\_umad" puis redémarrant.
+		Nous avons donc edité le fichier \cbo{/etc/modules} en y ajoutant la ligne "ib\_umad" puis redémarrer.
 		
-		Le \textbf{LID} correspond à Local Identifier et permet d'identifier chaque périphérique du réseau et l'utiliser comme adresse.
+		Le \textbf{LID} correspond à Local Identifier et permet d'identifier chaque périphérique du réseau et de l'utiliser comme adresse.
 		
 		Lors du lancement d'OpenSM, on remarque que les LIDs sont attribués.
 	
 	\chapter{Tables de routage}
 		Un fichier route se décompose en les différentes tables de routages pour chaque commutateur.
 		
-		Chaque table contient des lignes similaires qui indique une route. Voici un exemple:
+		Chaque table contient des lignes similaires qui indiquent une route. Voici un exemple:
 		
 		0x0001 004 : (Channel Adapter portguid 0x0000000000100001: 'HCA(000)')
 		
@@ -43,23 +43,66 @@
 				\begin{tabularx}{0.99\textwidth}{|c|X|X|}
 					\hline
 					& XGFT & PGFT\\\hline\endhead
-					Avantages & On peut multiplier les liens entre des n\oe ux du niveau $L$ et $L-1$. Non bloquant. Premier "petaflopique".& \\\hline
-					Inconvénients & On ne peut pas doubler les liens entre deux n\oe ux & \\\hline	
+					Avantages & On peut multiplier les liens entre des n\oe ux du niveau $L$ et $L-1$. Non bloquant. Premier "petaflopique".& Permet d'éviter les phénomènes de congestion. Permet de réduire le coût par élagage des liens. Permet d'assurer une bonne bande passante.\\\hline
+					Inconvénients & On ne peut pas doubler les liens entre deux n\oe ux & ---\\\hline	
 				\end{tabularx}
 				\caption{Avantages et inconvénients des topologies précédentes}
 			\end{table}
 			
 			Les tables de routage générées sont disponibles dans \autoref{sec:routes}.
+			
+			\begin{figure}[H]
+				\begin{minipage}{0.74\textwidth}
+					\img{T1.png}{Route topologie 1}{0.65}
+				\end{minipage}
+				\begin{minipage}{0.25\textwidth}
+					\begin{easylist}
+						& Route 1 (rouge): La route prise démarre de 000 pour aller vers le seul switch auquel il est connecté. Puis ce switch étant connecté à la destination 010, le paquet prend la route <100> $\rightarrow$ 010.
+						
+						& Route 2 (vert): La route prise démarre de 000 pour aller vers le seul switch auquel il est connecté. Puis ce switch regarde sa table de routage et détermine qu'il faut l'envoyer à <001> par le port 5. Ce nouveau switch regarde sa table de routage et détermine qu'il faut l'envoyer à <110> par le port 5. Puis ce switch étant connecté à la destination 200, le paquet prend la route <110> $\rightarrow$ 200.
+					\end{easylist}
+				\end{minipage}
+			\end{figure}
+			
+			\img{T2.png}{Route topologie 2}{0.5}
+			
+			\begin{easylist}
+						& Route 1 (rouge): La route prise démarre de 000 pour aller vers le seul switch auquel il est connecté. Puis ce switch regarde sa table de routage et détermine qu'il faut l'envoyer à <100> par le port 3. Ce nouveau switch regarde sa table de routage et détermine qu'il faut l'envoyer à <201> par le port 2. Puis ce switch étant connecté à la destination 010, le paquet prend la route <201> $\rightarrow$ 010.
+						
+						& Route 2 (vert): La route prise démarre de 000 pour aller vers le seul switch auquel il est connecté. Puis ce switch regarde sa table de routage et détermine qu'il faut l'envoyer à <100> par le port 3. Puis ce switch regarde sa table de routage et détermine qu'il faut l'envoyer à <000> par le port 3. Puis ce switch regarde sa table de routage et détermine qu'il faut l'envoyer à <120> par le port 3. Puis ce switch regarde sa table de routage et détermine qu'il faut l'envoyer à <220> par le port 1. Puis ce switch étant connecté à la destination 200, le paquet prend la route <220> $\rightarrow$ 200.
+					\end{easylist}
 						
 		\section{Quelques algorithmes de routage}
+			\subsection{MinHop}
+				Cet algorithme a pour but d'emprunter le plus court chemin en termes de sauts. Il cherche donc à optimiser le nombre de sauts.
+				
+			\subsection{UPDN}
+				UPDN signifie "Up/Down" et fonctionne sur le même principe que minhop: emprunter la plus courte distance. Cependant une règle supplémentaire permet d'éviter notamment les bouclages: l'algorithme passe d'abord par une phase montante, puis une descendante. De cette manière il est interdit de redescendre dans l'arbre puis de remonter.
+				
+			\subsection{FTree}
+				FTree reprend les principes d'UPDN tout en évitant les phénomènes de congestion.
+				
+			\subsection{DOR}
+				Reprend la technique vue en cours avec le XOR dans un hypercube et permet ainsi de diriger le traffic dimension par dimension.
+			
+			\subsection{LASH}
+				Mix entre UDPN et DOR. Permet de prendre le plus court chemin tout en répartissant le traffic entre les couches afin d'éviter le phénomène de congestion.
 		
 		\section{Quelques métriques pour l’étude des performances des algorithmes de routage}
 			\section{MinHop}
 				Le code du calculateur est disponible dans \autoref{sec:code}
 				
 			\section{Route balancing}
+				Le code du calculateur est disponible dans \autoref{sec:code}
 				
-			
+			\section{Résultats}
+				Topologie 1: MinHop = 4, Balancing  4.
+				
+				Topologie 2: MinHop = 6, Balancing = 20.
+				
+				Après analyse de ces résultats, nous déduisons que sur la topologie n°2 il faudrait utiliser un algorithme de routage évitant les phénomènes de congestion. Nous préconisons l'utilisation de FTree ou LASH.
+				
+				En revanche, pour la topologie n°1, UPDN ou DOR semblent suffisants.
 		
 	\appendix
 	\chapter{Calculateur\label{sec:code}}
@@ -72,4 +115,8 @@
 		\section{Topologie 2}
 			\lstinputlisting[caption="Route 2"]{../route2.route}
 	
+	\chapter{NS3}
+		Par manque de temps (la compilation étant très longue, plus d'une heure avec les tests etc.) nous n'avons pas pu tester NS3.
+		
+		\img{NS3.png}{Tests NS3}{}
 \end{document}

@@ -32,19 +32,10 @@ int Calculation::getHopCount(int fromId, int toId)
   	if(fromId == toId)
 		return 0;
 	int count = 1;
-
 	struct hostNode * fromHost = topologyTable.getHostById(fromId);
-
 	string fromNode = fromHost->name;
 	string toNode = topologyTable.getHostById(toId)->name;
-
-	string switchName = fromHost->dstName;
-	//TODO
-	//Parcourer la table de routage du noeud fromId vers le toId
-	//Aide : Regarder la struture routeItem et switchNode elles pourront vous aider.
-	//Aide : struct routeItem * item = routingTable.getTableByName(switchName); permet de charger la table de routage
-	//Retourner le nombre de sauts du noeud fromId vers le toId
-
+	string switchName = fromHost->dstName; //Get the first switch that the node is connected to.
 	bool shouldSearch = true;
 
 	while(shouldSearch)
@@ -52,17 +43,17 @@ int Calculation::getHopCount(int fromId, int toId)
 		bool changed = false;
 		routeItem * route = routingTable.getTableByName(switchName);
 
-		for(int i = 0; i < route->subitems; i++)
+		for(int i = 0; i < route->subitems; i++) //For each item in the routing table
 		{
-			if(route->dstInfo.at(static_cast<unsigned long>(i)) == topologyTable.getHostById(toId)->name)
+			if(route->dstInfo.at(static_cast<unsigned long>(i)) == topologyTable.getHostById(toId)->name) //If it's our destination
 			{
-				string name = topologyTable.getSwitchByName(switchName)->dstName.at(static_cast<unsigned long>(route->outport.at(i)) - 1);
-				if(name == topologyTable.getHostById(toId)->name)
+				string name = topologyTable.getSwitchByName(switchName)->dstName.at(static_cast<unsigned long>(route->outport.at(i)) - 1); //Get the next node
+				if(name == topologyTable.getHostById(toId)->name) //If we arrived to our destination, stop
 				{
 					shouldSearch = false;
 					break;
 				}
-				else
+				else //Set new switch
 				{
 					changed = true;
 					switchName = name;
@@ -75,7 +66,6 @@ int Calculation::getHopCount(int fromId, int toId)
 			std::cout << "ERRROR MAMAMIA" << std::endl;
 			break;
 		}
-
 		count++;
 	}
 
@@ -89,14 +79,6 @@ int Calculation::getHopCount(int fromId, int toId)
 int Calculation::calculate()
 {
 	int minHop = 0xffff; //Max value
-
-	//TODO
-	//Implémenter l'algo du calcul du nombre de sauts
-	//Aide : Pour recueperer le nombre de saut de source vers destination -> getHopCount(source, destination);
-	//Aide : Pour recuperer le nombre de HCA -> topologyTable.getHostCount();
-	//Aide  utiliser les fonctions min(i,j) et max(i,j) pour recuperer le min et le max entre deux valeurs
-	//retourner le minimum trouver.
-
 	for(int i = 0; i < topologyTable.getHostCount(); i++)
 	{
 		int cpt = 0;
@@ -108,7 +90,6 @@ int Calculation::calculate()
 		}
 		minHop = min(minHop, cpt);
 	}
-
 	return minHop;
 }
 
@@ -119,31 +100,16 @@ int Calculation::calculate()
 int Calculation::getRoute(int fromId, int toId)
 {
 	struct hostNode * fromHost = topologyTable.getHostById(fromId);
-
 	string fromNode = fromHost->name;
-
 	string toNode = topologyTable.getSwitchById(toId)->name;
-
 	cout << "From " << fromNode << " to " << toNode;
-
 	string switchName = fromHost->dstName;
-
-
-	//TODO
-	//Parcourir la table de routage du noeud fromId vers le toId
-	//Aide : Regarder la structure routeItem et switchNode elles pourront vous aider.
-	//Aide : struct routeItem * item = routingTable.getTableByName(switchName); permet de charger la table de routage
-	//Retourner 1 si le noeud toId est atteilgnable depuis fromId sinon 0
-
-
 	struct routeItem * route = routingTable.getTableByName(switchName);
 
 	for(int i = 0; i < route->dstInfo.size(); i++){
         if(route->dstInfo[i] == toNode)
             return 1;
 	}
-
-
 	return 0;
 }
 
@@ -153,30 +119,17 @@ int Calculation::getRoute(int fromId, int toId)
 int Calculation::balance()
 {
 	int balance = 0x0000;; //Max value
-
-	//TODO
-	//Implémenter l'algo du calcul de chemins disjoints
-	//Aide : Pour recueperer le nombre de sauts de source vers destination -> getHopCount(source, destination);
-	//Aide : Pour recuperer le nombre de HCA -> topologyTable.getHostCount();
-	//Aide  utiliser les fonctions min(i,j) et max(i,j) pour recuperer le min et le max entre deux valeurs
-	//retourner le minimum trouver.
-
-
-
-    for(int i = 0; i < topologyTable.getSwitchCount(); i++){
+    
+    for(int i = 0; i < topologyTable.getSwitchCount(); i++){ //For each switch
         switchNode * s = topologyTable.getSwitchById(i);
         struct routeItem * route = routingTable.getTableByName(s->name);
         int t[s->portCount] = {0};
-        for(int j = 0; j < route->subitems; j++){
+        for(int j = 0; j < route->subitems; j++){ //Count each route on each port (link)
                 t[route->outport[j] -1]++;
         }
         for(int j = 0; j < s->portCount; j++)
-            balance = max (balance, t[j]);
-
+            balance = max (balance, t[j]); //Get the max
     }
-
-
-
 	return balance;
 }
 
